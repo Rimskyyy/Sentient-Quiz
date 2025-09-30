@@ -1,84 +1,86 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+<script>
+  const quizData = [
+    { q: "What does GRID stand for in the context of Sentient’s architecture?", options: ["Global Research and Intelligence Directory","Guiding Recursive Intelligence Design","Generalized Reasoning & Inference Domain","Global Routing & Intelligence Dispatch"], answer: "Global Research and Intelligence Directory" },
+    { q: "How does Sentient propose to fund and reward contributions to the GRID ecosystem?", options: ["Using traditional VC funding only","By issuing equity shares in projects","Through a token economy where people stake $SENT on artifacts","Via subscription fees from users only"], answer: "Through a token economy where people stake $SENT on artifacts" },
+    { q: "What is the primary architectural novelty of ROMA?", options: ["It uses a single monolithic model for all tasks","It uses a flat multi-agent system with no hierarchy","It decomposes complex tasks recursively into subtasks in a tree structure","It relies purely on human-in-the-loop corrections"], answer: "It decomposes complex tasks recursively into subtasks in a tree structure" },
+    { q: "In the ROMA framework, what role does the “Aggregator” node perform?", options: ["It breaks a task into subtasks","It executes atomic tasks","It merges results from children tasks","It discards irrelevant sub-results"], answer: "It merges results from children tasks" },
+    { q: "What performance did Open Deep Search (ODS) achieve on the FRAMES benchmark?", options: ["~55%","~75.3%","~90%","~65.6%"], answer: "~75.3%" },
+    { q: "Which two components are central to ODS’s architecture?", options: ["Search Engine and Summarizer","Open Reasoning Agent and Open Search Tool","Prompt Generator and Memory Module","Context Router and Token Filter"], answer: "Open Reasoning Agent and Open Search Tool" },
+    { q: "What is a context manipulation attack in the context of web agents?", options: ["Changing the user’s browser settings","Tampering with stored memory/context to influence agent behavior","Altering the agent’s prompts at runtime","Overloading the agent with too much context"], answer: "Tampering with stored memory/context to influence agent behavior" },
+    { q: "The blog asserts that prompt-only defenses are insufficient. What alternative measure is suggested?", options: ["Use longer prompts","Semantic integrity checks and strict memory isolation","Disable memory entirely","Use only closed-source agents"], answer: "Semantic integrity checks and strict memory isolation" },
+    { q: "What is LiveCodeBench Pro?", options: ["A code editor built into Sentient Chat","A benchmark evaluating LLMs on competitive programming tasks","A tool to auto-generate documentation","A plugin to test code style"], answer: "A benchmark evaluating LLMs on competitive programming tasks" },
+    { q: "Why is coding considered especially difficult for LLMs?", options: ["Because code is ambiguous","It requires exact syntax and tracking long-range dependencies","LLMs dislike programming languages","There are no benchmarks for code tasks"], answer: "It requires exact syntax and tracking long-range dependencies" },
+    { q: "What is fingerprinting?", options: ["A biometric login method","Embedding invisible key-response pairs into models to prove ownership","A method to speed up model inference","A technique for compressing model weights"], answer: "Embedding invisible key-response pairs into models to prove ownership" },
+    { q: "What challenge does fingerprinting try to overcome in open-source models?", options: ["Slow performance","Model interpretability","Verifiable ownership even when model weights are shared","Reducing energy consumption"], answer: "Verifiable ownership even when model weights are shared" },
+    { q: "In “Finally: AI That Doesn’t Sound Like a Corporate Robot,” what problem do the authors identify with most AI assistants today?", options: ["They are too fast","They are too creative","They sound overly polite, sanitized, and lack personality","They refuse to answer basic questions"], answer: "They sound overly polite, sanitized, and lack personality" },
+    { q: "How does Dobby manage to combine personality with accurate technical performance?", options: ["Training two separate models and switching manually","Discarding accuracy for vibe","Using token-level routing, data overloading, and an automated training pipeline","Only handling non-technical tasks"], answer: "Using token-level routing, data overloading, and an automated training pipeline" },
+    { q: "What major risk is highlighted when AI agents integrate with crypto/blockchain systems?", options: ["Slow transaction times","Security vulnerabilities like memory injection leading to irreversible losses","Lack of adoption","High fees"], answer: "Security vulnerabilities like memory injection leading to irreversible losses" }
+  ];
 
-const quizData = [
-  { q: "What does GRID stand for in the context of Sentient’s architecture?", options: ["Global Research and Intelligence Directory","Guiding Recursive Intelligence Design","Generalized Reasoning & Inference Domain","Global Routing & Intelligence Dispatch"], answer: 0 },
-  { q: "How does Sentient propose to fund and reward contributions to the GRID ecosystem?", options: ["Using traditional VC funding only","By issuing equity shares in projects","Through a token economy where people stake $SENT on artifacts","Via subscription fees from users only"], answer: 2 },
-  { q: "What is the primary architectural novelty of ROMA (Recursive Open Meta-Agent)?", options: ["It uses a single monolithic model for all tasks","It uses a flat multi-agent system with no hierarchy","It decomposes complex tasks recursively into subtasks in a tree structure","It relies purely on human-in-the-loop corrections"], answer: 2 },
-  { q: "In the ROMA framework, what role does the “Aggregator” node perform?", options: ["It breaks a task into subtasks","It executes atomic tasks","It merges results from children tasks","It discards irrelevant sub-results"], answer: 2 },
-  { q: "What performance did Open Deep Search (ODS) achieve on the FRAMES benchmark, as claimed in the blog?", options: ["~55%","~75.3%","~90%","~65.6%"], answer: 1 },
-  { q: "Which two components are central to ODS’s architecture?", options: ["Search Engine and Summarizer","Open Reasoning Agent and Open Search Tool","Prompt Generator and Memory Module","Context Router and Token Filter"], answer: 1 },
-  { q: "What is a context manipulation attack in the context of web agents?", options: ["Changing the user’s browser settings","Tampering with stored memory/context to influence agent behavior","Altering the agent’s prompts at runtime","Overloading the agent with too much context"], answer: 1 },
-  { q: "The blog asserts that prompt-only defenses are insufficient. What alternative measure is suggested?", options: ["Use longer prompts","Semantic integrity checks and strict memory isolation","Disable memory entirely","Use only closed-source agents"], answer: 1 },
-  { q: "What is LiveCodeBench Pro, as introduced in the “Why AI Isn’t a Coding Grandmaster Yet” post?", options: ["A code editor built into Sentient Chat","A benchmark evaluating LLMs on competitive programming tasks","A tool to auto-generate documentation","A plugin to test code style"], answer: 1 },
-  { q: "Why is coding considered especially difficult for LLMs, as per the blog?", options: ["Because code is ambiguous","It requires exact syntax and tracking long-range dependencies","LLMs dislike programming languages","There are no benchmarks for code tasks"], answer: 1 },
-  { q: "What is fingerprinting as discussed in 'Enabling Open-Source Monetization on the Model Layer'?", options: ["A biometric login method","Embedding invisible key-response pairs into models to prove ownership","A method to speed up model inference","A technique for compressing model weights"], answer: 1 },
-  { q: "What challenge does fingerprinting try to overcome in open-source models?", options: ["Slow performance","Model interpretability","Verifiable ownership even when model weights are shared","Reducing energy consumption"], answer: 2 },
-  { q: "In 'Finally: AI That Doesn’t Sound Like a Corporate Robot,' what problem do the authors identify with most AI assistants today?", options: ["They are too fast","They are too creative","They sound overly polite, sanitized, and lack personality","They refuse to answer basic questions"], answer: 2 },
-  { q: "How does Dobby manage to combine personality with accurate technical performance, according to the blog?", options: ["Training two separate models and switching manually","Discarding accuracy for vibe","Using token-level routing, data overloading, and an automated training pipeline","Only handling non-technical tasks"], answer: 2 },
-  { q: "What major risk is highlighted when AI agents integrate with crypto/blockchain systems?", options: ["Slow transaction times","Security vulnerabilities like memory injection leading to irreversible losses","Lack of adoption","High fees"], answer: 1 },
-];
+  let currentQuestion = 0;
+  let score = 0;
 
-export default function SentientQuiz() {
-  const [selected, setSelected] = useState({});
+  function shuffleArray(array) {
+    return array.sort(() => Math.random() - 0.5);
+  }
 
-  const handleSelect = (qIndex, oIndex) => {
-    if (selected[qIndex] !== undefined) return;
-    setSelected({ ...selected, [qIndex]: oIndex });
-  };
+  function loadQuestion() {
+    if (currentQuestion < quizData.length) {
+      const qData = quizData[currentQuestion];
+      const quizDiv = document.getElementById("quiz");
+      let options = shuffleArray([...qData.options]);
+      quizDiv.innerHTML = `
+        <div class="question">${currentQuestion + 1}. ${qData.q}</div>
+        <div class="options">
+          ${options.map(opt => `<button onclick="checkAnswer(this, '${opt}')">${opt}</button>`).join("")}
+        </div>
+      `;
+    } else {
+      document.getElementById("quiz").innerHTML = `<h2>You finished the quiz!</h2>`;
+      document.getElementById("result").innerHTML = `Your Score: ${score} / ${quizData.length}`;
+      document.getElementById("actions").style.display = "block";
+    }
+  }
 
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
-      <img
-        src="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg"
-        alt="Sentient"
-        className="w-24 h-24 rounded-full shadow-lg mb-6"
-      />
-      <h1 className="text-4xl font-bold mb-8">Sentient Quiz</h1>
-      <div className="w-full max-w-3xl space-y-6">
-        {quizData.map((item, qIndex) => (
-          <motion.div
-            key={qIndex}
-            className="bg-gray-800 p-6 rounded-2xl shadow-lg"
-            whileHover={{ scale: 1.02 }}
-          >
-            <h2 className="text-xl font-semibold mb-4">{qIndex + 1}. {item.q}</h2>
-            <div className="space-y-3">
-              {item.options.map((opt, oIndex) => {
-                const isSelected = selected[qIndex] === oIndex;
-                const isCorrect = item.answer === oIndex;
-                let optionStyle = "bg-gray-700 hover:bg-gray-600";
+  function checkAnswer(button, selected) {
+    const buttons = document.querySelectorAll(".options button");
+    const correctAnswer = quizData[currentQuestion].answer;
 
-                if (selected[qIndex] !== undefined) {
-                  if (isCorrect) optionStyle = "bg-green-600";
-                  else if (isSelected && !isCorrect) optionStyle = "bg-red-600";
-                  else optionStyle = "bg-gray-700 opacity-50";
-                }
+    // Disable all buttons
+    buttons.forEach(btn => btn.disabled = true);
 
-                return (
-                  <button
-                    key={oIndex}
-                    onClick={() => handleSelect(qIndex, oIndex)}
-                    className={`w-full text-left p-3 rounded-lg ${optionStyle}`}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      <footer className="mt-12 flex flex-col items-center space-y-2">
-        <a href="https://x.com/risky_xyz" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3">
-          <img
-            src="https://pbs.twimg.com/profile_images/1868541602320293888/-rPhBPR0_400x400.jpg"
-            alt="risky_xyz"
-            className="w-10 h-10 rounded-full"
-          />
-          <span className="text-lg">Made by @risky_xyz</span>
-        </a>
-      </footer>
-    </div>
-  );
-}
+    if (selected === correctAnswer) {
+      button.style.backgroundColor = "green";
+      score++;
+    } else {
+      button.style.backgroundColor = "red";
+      buttons.forEach(btn => {
+        if (btn.textContent === correctAnswer) {
+          btn.style.backgroundColor = "green";
+        }
+      });
+    }
+
+    // Move to next question after delay
+    setTimeout(() => {
+      currentQuestion++;
+      loadQuestion();
+    }, 1200);
+  }
+
+  function shareOnX() {
+    const text = `I just scored ${score}/${quizData.length} on the Sentient Quiz! 🚀\nMade by Risky\nhttps://x.com/risky_xyz`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+  }
+
+  function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById("actions").style.display = "none";
+    document.getElementById("result").innerHTML = "";
+    loadQuestion();
+  }
+
+  loadQuestion();
+</script>
