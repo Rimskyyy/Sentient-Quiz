@@ -5,199 +5,241 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Sentient Quiz</title>
   <link rel="icon" href="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
       --bg1:#0f172a; --bg2:#071028; --card:#0b1220;
       --accent:#6ee7b7; --accent-2:#6366f1; --muted:#cbd5e1;
-      --glass: rgba(255,255,255,0.05);
-      --text:#f8fafc;
+      --glass: rgba(255,255,255,0.06);
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
-      background: linear-gradient(180deg,var(--bg1),var(--bg2));
-      color:var(--text);
-      padding:36px;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(1000px 600px at 10% 10%, rgba(99,102,241,0.12), transparent),
+                  radial-gradient(800px 500px at 90% 90%, rgba(110,231,183,0.06), transparent),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#f8fafc;
+      padding:16px;
       display:flex;
       align-items:center;
       justify-content:center;
+      min-height:100vh;
     }
 
-    .container{max-width:960px;width:100%;display:grid;grid-template-columns:380px 1fr;gap:28px;}
+    .container{
+      width:100%;
+      max-width:960px;
+      margin:16px auto;
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:20px;
+    }
+
     .panel,.card{
-      background: var(--card);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
       border:1px solid rgba(255,255,255,0.06);
       border-radius:18px;
-      padding:22px;
-      box-shadow:0 6px 30px rgba(0,0,0,0.6);
+      padding:18px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.7);
     }
 
-    h1,h2{margin:0;}
-    h2.question{font-size:20px;margin:12px 0 18px;line-height:1.4;color:var(--text);}
-    .opt{
-      background:var(--glass);padding:14px;border-radius:10px;cursor:pointer;
-      transition:0.2s;border:1px solid transparent;color:var(--text);
+    .hero{
+      border-radius:12px; overflow:hidden; position:relative;
+      height:200px; display:flex; align-items:center; justify-content:center;
     }
-    .opt:hover{background:rgba(255,255,255,0.08);}
-    .opt.correct{border-color:#10b981;background:rgba(16,185,129,0.15);}
-    .opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.15);}
+    .hero img{width:100%; height:100%; object-fit:cover; filter:brightness(0.9);}
+    .hero .overlay{
+      position:absolute; bottom:0; left:0; right:0; padding:14px;
+      background:linear-gradient(180deg,transparent,rgba(0,0,0,0.7));
+    }
+    .hero h1{margin:0;font-size:22px;color:#fff;}
+
+    .author{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;margin-top:14px;}
+    .author img{width:42px;height:42px;border-radius:999px;border:2px solid rgba(255,255,255,0.08);}
+    .author .name{font-weight:600;font-size:14px;}
+    .author .handle{font-size:12px;color:var(--muted);}
+
+    .desc{margin-top:12px;font-size:13px;color:var(--muted);line-height:1.5;}
+
     .btn{
       background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      border:none;padding:10px 16px;border-radius:10px;cursor:pointer;
-      color:#021321;font-weight:700;
+      border:none;color:#021321;font-weight:700;
+      padding:10px 14px;border-radius:10px;cursor:pointer;
+      box-shadow: 0 8px 30px rgba(99,102,241,0.15);
     }
-    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.3);color:var(--text);}
-    .result{text-align:center;}
-    .score{font-size:38px;font-weight:800;margin:12px 0;
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--muted);}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+    .progress{height:10px;background:rgba(255,255,255,0.05);border-radius:999px;overflow:hidden;margin-bottom:14px;}
+    .progress>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .6s;}
+
+    h2.question{font-size:18px;margin:10px 0 14px;min-height:50px;}
+
+    .options{display:grid;gap:12px;}
+    .opt{
+      background:var(--glass);padding:12px 14px;border-radius:12px;
+      border:1px solid rgba(255,255,255,0.08);
+      cursor:pointer;transition:.2s;user-select:none;
+    }
+    .opt:hover{transform:translateY(-3px);}
+    .opt.correct{background:linear-gradient(90deg,rgba(110,231,183,0.15),rgba(99,102,241,0.08));border-color:var(--accent);}
+    .opt.wrong{background:linear-gradient(90deg,rgba(239,68,68,0.15),rgba(99,102,241,0.05));border-color:#ef4444;}
+
+    .result{text-align:center;padding:18px;}
+    .score{font-size:36px;font-weight:800;margin:6px 0;
       background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      -webkit-background-clip:text;color:transparent;}
+      -webkit-background-clip:text;background-clip:text;color:transparent;}
+    .small{color:var(--muted);font-size:14px;}
+
     .leaderboard{margin-top:20px;}
-    .leaderboard h3{margin:0 0 8px;}
+    .leaderboard h3{margin:0 0 10px;font-size:16px;}
     .leaderboard ul{list-style:none;padding:0;margin:0;}
-    .leaderboard li{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-    .start-screen{text-align:center;}
-    .input-field{margin:10px 0;}
-    .input-field input{padding:10px;width:80%;border-radius:8px;border:1px solid rgba(255,255,255,0.2);}
+    .leaderboard li{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;}
+
+    /* Start Screen */
+    #startScreen{text-align:center;max-width:400px;margin:auto;}
+    #startScreen input{
+      width:100%;padding:10px;margin:8px 0;
+      border-radius:8px;border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.05);color:#fff;
+    }
+
+    @media (max-width:768px){
+      .container{grid-template-columns:1fr;}
+      .hero{height:160px;}
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+<div id="startScreen">
+  <img src="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg" width="80" style="border-radius:50%;margin-bottom:12px;">
+  <h1>Sentient Quiz</h1>
+  <p>Enter your details to start:</p>
+  <input id="playerName" type="text" placeholder="Your Name" required>
+  <input id="playerTwitter" type="text" placeholder="Twitter Handle (without @)" required>
+  <button class="btn" onclick="startQuiz()">Start Quiz</button>
+</div>
 
-    <!-- Left panel -->
-    <aside class="panel">
-      <h1>Sentient Quiz</h1>
-      <p>15 questions about Sentient Labs. Test your knowledge & share your score!</p>
-      <div style="margin-top:20px;">
-        <a class="author" href="https://x.com/risky_xyz" target="_blank">
-          <img src="https://pbs.twimg.com/profile_images/1868541602320293888/-rPhBPR0_400x400.jpg" style="width:44px;height:44px;border-radius:50%;vertical-align:middle;">
-          <span style="margin-left:10px;font-weight:600;">Made By risky_xyz</span>
-        </a>
-      </div>
-    </aside>
+<div class="container" id="quizApp" style="display:none;">
+  <aside class="panel">
+    <div class="hero">
+      <img src="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg" alt="Sentient logo">
+      <div class="overlay"><h1>Sentient Quiz</h1></div>
+    </div>
+    <a class="author" href="https://x.com/risky_xyz" target="_blank">
+      <img src="https://pbs.twimg.com/profile_images/1868541602320293888/-rPhBPR0_400x400.jpg" alt="risky_xyz profile">
+      <div><div class="name">Made By risky_xyz</div><div class="handle">@risky_xyz</div></div>
+    </a>
+    <div class="desc">Answer 15 questions and test your Sentient knowledge. See your score and compete on the leaderboard.</div>
+    <div class="leaderboard">
+      <h3>Leaderboard</h3>
+      <ul id="leaderboardList"></ul>
+    </div>
+  </aside>
 
-    <!-- Right panel -->
-    <section class="card">
-      <!-- Start Screen -->
-      <div id="startScreen" class="start-screen">
-        <h2>Enter Your Details</h2>
-        <div class="input-field">
-          <input type="text" id="playerName" placeholder="Your Name" required>
-        </div>
-        <div class="input-field">
-          <input type="text" id="playerHandle" placeholder="Twitter Handle (without @)" required>
-        </div>
-        <button class="btn" onclick="startQuiz()">Start Quiz</button>
+  <section class="card">
+    <div class="progress"><i id="progress-bar"></i></div>
+    <div id="quizContent">
+      <div class="qtop"><div id="qnum"></div><div id="timer"></div></div>
+      <h2 class="question" id="question">Loading...</h2>
+      <div class="options" id="options"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:14px;">
+        <button class="btn secondary" onclick="goPrev()">Previous</button>
+        <button class="btn" onclick="goNext()">Next</button>
       </div>
-
-      <!-- Quiz Content -->
-      <div id="quizContent" style="display:none;">
-        <div id="qnum">Question 1 of 15</div>
-        <h2 class="question" id="question">Loading...</h2>
-        <div id="options"></div>
-        <div style="margin-top:16px;">
-          <button class="btn secondary" onclick="prevQ()">Previous</button>
-          <button class="btn secondary" onclick="nextQ()">Next</button>
-          <button class="btn" onclick="finishQuiz()">Finish</button>
-        </div>
-      </div>
-
-      <!-- Result -->
-      <div id="resultPanel" class="result" style="display:none;">
-        <h2>Quiz Finished!</h2>
-        <div class="score" id="finalScore"></div>
-        <p id="resultText"></p>
-        <button class="btn" onclick="restartQuiz()">Restart</button>
-        <div class="leaderboard">
-          <h3>Leaderboard</h3>
-          <ul id="leaderboardList"></ul>
-        </div>
-      </div>
-    </section>
-  </div>
+    </div>
+    <div id="resultPanel" class="result" style="display:none;">
+      <div class="small">Quiz Finished!</div>
+      <div class="score" id="finalScore">0 / 15</div>
+      <div class="small" id="resultText">Great job!</div>
+      <button class="btn" onclick="restart()">Restart Quiz</button>
+    </div>
+  </section>
+</div>
 
 <script>
-const questions=[ /* same 15 Qs as before */ 
-  {q:"What does GRID stand for in the context of Sentient’s architecture?",options:[
-  "Global Research and Intelligence Directory","Guiding Recursive Intelligence Design","Generalized Reasoning & Inference Domain","Global Routing & Intelligence Dispatch"],answer:0},
-  {q:"How does Sentient propose to fund and reward contributions to the GRID ecosystem?",options:[
-  "Using traditional VC funding only","By issuing equity shares in projects","Through a token economy where people stake $SENT on artifacts","Via subscription fees from users only"],answer:2},
-  {q:"What is the primary architectural novelty of ROMA (Recursive Open Meta-Agent)?",options:[
-  "It uses a single monolithic model for all tasks","It uses a flat multi-agent system with no hierarchy","It decomposes complex tasks recursively into subtasks in a tree structure","It relies purely on human-in-the-loop corrections"],answer:2},
-  {q:"In the ROMA framework, what role does the “Aggregator” node perform?",options:[
-  "It breaks a task into subtasks","It executes atomic tasks","It merges results from children tasks","It discards irrelevant sub-results"],answer:2},
+const questions = [ /* same 15 Qs from your code */ 
+  {q:"What does GRID stand for in the context of Sentient’s architecture?",options:["Global Research and Intelligence Directory","Guiding Recursive Intelligence Design","Generalized Reasoning & Inference Domain","Global Routing & Intelligence Dispatch"],answer:0},
+  {q:"How does Sentient propose to fund and reward contributions to the GRID ecosystem?",options:["Using traditional VC funding only","By issuing equity shares in projects","Through a token economy where people stake $SENT on artifacts","Via subscription fees from users only"],answer:2},
+  {q:"What is the primary architectural novelty of ROMA (Recursive Open Meta-Agent)?",options:["It uses a single monolithic model for all tasks","It uses a flat multi-agent system with no hierarchy","It decomposes complex tasks recursively into subtasks in a tree structure","It relies purely on human-in-the-loop corrections"],answer:2},
+  {q:"In the ROMA framework, what role does the “Aggregator” node perform?",options:["It breaks a task into subtasks","It executes atomic tasks","It merges results from children tasks","It discards irrelevant sub-results"],answer:2},
   {q:"What performance did Open Deep Search (ODS) achieve on the FRAMES benchmark?",options:["~55%","~75.3%","~90%","~65.6%"],answer:1},
   {q:"Which two components are central to ODS’s architecture?",options:["Search Engine and Summarizer","Open Reasoning Agent and Open Search Tool","Prompt Generator and Memory Module","Context Router and Token Filter"],answer:1},
-  {q:"What is a context manipulation attack in the context of web agents?",options:["Changing the user’s browser settings","Tampering with stored memory/context to influence agent behavior","Altering the agent’s prompts at runtime","Overloading the agent with too much context"],answer:1},
-  {q:"Prompt-only defenses are insufficient. What alternative measure is suggested?",options:["Use longer prompts","Semantic integrity checks and strict memory isolation","Disable memory entirely","Use only closed-source agents"],answer:1},
+  {q:"What is a context manipulation attack in web agents?",options:["Changing the user’s browser settings","Tampering with stored memory/context to influence agent behavior","Altering the agent’s prompts at runtime","Overloading the agent with too much context"],answer:1},
+  {q:"What alternative defense is suggested instead of prompt-only?",options:["Use longer prompts","Semantic integrity checks and strict memory isolation","Disable memory entirely","Use only closed-source agents"],answer:1},
   {q:"What is LiveCodeBench Pro?",options:["A code editor built into Sentient Chat","A benchmark evaluating LLMs on competitive programming tasks","A tool to auto-generate documentation","A plugin to test code style"],answer:1},
-  {q:"Why is coding considered especially difficult for LLMs?",options:["Because code is ambiguous","It requires exact syntax and tracking long-range dependencies","LLMs dislike programming languages","There are no benchmarks for code tasks"],answer:1},
+  {q:"Why is coding difficult for LLMs?",options:["Because code is ambiguous","It requires exact syntax and tracking long-range dependencies","LLMs dislike programming languages","There are no benchmarks"],answer:1},
   {q:"What is fingerprinting in open-source models?",options:["A biometric login method","Embedding invisible key-response pairs into models to prove ownership","A method to speed up model inference","A technique for compressing model weights"],answer:1},
-  {q:"What challenge does fingerprinting try to overcome?",options:["Slow performance","Model interpretability","Verifiable ownership even when model weights are shared","Reducing energy consumption"],answer:2},
-  {q:"AI assistants problem today?",options:["They are too fast","They are too creative","They sound overly polite, sanitized, and lack personality","They refuse to answer basic questions"],answer:2},
-  {q:"How does Dobby combine personality with accuracy?",options:["Training two separate models","Discarding accuracy for vibe","Using token-level routing, data overloading, and automated training","Only handling non-technical tasks"],answer:2},
-  {q:"Risk when AI agents integrate with crypto?",options:["Slow transaction times","Security vulnerabilities like memory injection","Lack of adoption","High fees"],answer:1},
+  {q:"What challenge does fingerprinting overcome?",options:["Slow performance","Model interpretability","Verifiable ownership even when model weights are shared","Reducing energy consumption"],answer:2},
+  {q:"Problem with most AI assistants today?",options:["They are too fast","They are too creative","They sound overly polite, sanitized, and lack personality","They refuse to answer basic questions"],answer:2},
+  {q:"How does Dobby combine personality with accuracy?",options:["Training two separate models","Discarding accuracy for vibe","Using token-level routing, data overloading, and an automated training pipeline","Only handling non-technical tasks"],answer:2},
+  {q:"Major risk of AI agents with blockchain?",options:["Slow transaction times","Security vulnerabilities like memory injection leading to irreversible losses","Lack of adoption","High fees"],answer:1},
 ];
 
-let current=0,score=0,player={name:"",handle:""};
+let current=0,score=0,selected=null,player={name:"",twitter:""};
 
 function startQuiz(){
-  const name=document.getElementById('playerName').value.trim();
-  const handle=document.getElementById('playerHandle').value.trim();
-  if(!name||!handle){alert("Enter both name and Twitter handle");return;}
-  player={name,handle};
-  document.getElementById('startScreen').style.display="none";
-  document.getElementById('quizContent').style.display="block";
-  renderQ();
-}
-function renderQ(){
-  const q=questions[current];
-  document.getElementById('qnum').textContent=`Question ${current+1} of ${questions.length}`;
-  document.getElementById('question').textContent=q.q;
-  const options=document.getElementById('options');options.innerHTML="";
-  q.options.forEach((opt,i)=>{
-    const btn=document.createElement('div');
-    btn.className="opt";btn.textContent=opt;
-    btn.onclick=()=>checkAns(i,btn);
-    options.appendChild(btn);
-  });
-}
-function checkAns(i,btn){
-  const q=questions[current];
-  document.querySelectorAll('.opt').forEach(o=>o.style.pointerEvents="none");
-  if(i===q.answer){btn.classList.add("correct");score++;}else{btn.classList.add("wrong");document.querySelectorAll('.opt')[q.answer].classList.add("correct");}
-}
-function nextQ(){if(current<questions.length-1){current++;renderQ();}else{finishQuiz();}}
-function prevQ(){if(current>0){current--;renderQ();}}
-function finishQuiz(){
-  document.getElementById('quizContent').style.display="none";
-  document.getElementById('resultPanel').style.display="block";
-  document.getElementById('finalScore').textContent=`${score} / ${questions.length}`;
-  document.getElementById('resultText').textContent=score>=12?"Amazing!":"Keep practicing!";
-  saveScore();
+  const name=document.getElementById("playerName").value.trim();
+  const tw=document.getElementById("playerTwitter").value.trim();
+  if(!name||!tw){alert("Please enter both name and Twitter handle");return;}
+  player={name,twitter:tw};
+  document.getElementById("startScreen").style.display="none";
+  document.getElementById("quizApp").style.display="grid";
+  renderQuestion();
   loadLeaderboard();
 }
-function restartQuiz(){location.reload();}
 
-/* Leaderboard (localStorage only) */
-function saveScore(){
+function renderQuestion(){
+  const q=questions[current];
+  document.getElementById("qnum").textContent=`Question ${current+1} of ${questions.length}`;
+  document.getElementById("question").textContent=q.q;
+  const optionsEl=document.getElementById("options");
+  optionsEl.innerHTML="";
+  q.options.forEach((opt,idx)=>{
+    const btn=document.createElement("div");
+    btn.className="opt";
+    btn.textContent=`${String.fromCharCode(65+idx)}. ${opt}`;
+    btn.onclick=()=>selectAnswer(idx,btn);
+    optionsEl.appendChild(btn);
+  });
+  document.getElementById("progress-bar").style.width=(current/questions.length*100)+"%";
+}
+
+function selectAnswer(idx,btn){
+  const q=questions[current];
+  document.querySelectorAll(".opt").forEach(el=>el.onclick=null);
+  if(idx===q.answer){btn.classList.add("correct");score++;} else {btn.classList.add("wrong");document.querySelectorAll(".opt")[q.answer].classList.add("correct");}
+}
+
+function goNext(){if(current+1<questions.length){current++;renderQuestion();}else showResult();}
+function goPrev(){if(current>0){current--;renderQuestion();}}
+
+function showResult(){
+  document.getElementById("quizContent").style.display="none";
+  document.getElementById("resultPanel").style.display="block";
+  document.getElementById("finalScore").textContent=`${score} / ${questions.length}`;
+  document.getElementById("resultText").textContent= score===questions.length ? "Perfect! You're a Sentient whiz 🎯" : score>=10 ? "Great Knowledge!" : "Keep Learning Sentient!";
+  saveLeaderboard();
+}
+
+function restart(){current=0;score=0;document.getElementById("quizContent").style.display="block";document.getElementById("resultPanel").style.display="none";renderQuestion();}
+
+function saveLeaderboard(){
   let board=JSON.parse(localStorage.getItem("sentientLeaderboard")||"[]");
-  board.push({name:player.name,handle:player.handle,score});
+  board.push({name:player.name,twitter:player.twitter,score});
   board.sort((a,b)=>b.score-a.score);
-  board=board.slice(0,5); // top 5
+  board=board.slice(0,5);
   localStorage.setItem("sentientLeaderboard",JSON.stringify(board));
+  loadLeaderboard();
 }
 function loadLeaderboard(){
   let board=JSON.parse(localStorage.getItem("sentientLeaderboard")||"[]");
-  const list=document.getElementById('leaderboardList');list.innerHTML="";
-  board.forEach(p=>{
-    const li=document.createElement('li');
-    li.textContent=`${p.name} (@${p.handle}) - ${p.score}`;
-    list.appendChild(li);
-  });
+  const list=document.getElementById("leaderboardList");list.innerHTML="";
+  board.forEach((p,i)=>{const li=document.createElement("li");li.textContent=`${i+1}. ${p.name} (@${p.twitter}) - ${p.score}`;list.appendChild(li);});
 }
 </script>
 </body>
 </html>
+
