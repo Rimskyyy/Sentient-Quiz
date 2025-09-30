@@ -104,25 +104,38 @@
       color: #bbb;
     }
 
+    .footer-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-info img.profile {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid #00bcd4;
+    }
+
     .socials {
-      margin-top: 10px;
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 20px;
     }
 
     .socials a, .socials div {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       color: #fff;
       text-decoration: none;
       font-size: 1rem;
     }
 
     .socials img {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
     }
 
     @media (max-width: 600px) {
@@ -150,21 +163,24 @@
     <div id="quiz"></div>
     <div id="result"></div>
     <div id="actions" style="display:none;">
-      <button onclick="downloadScore()">Download Scorecard</button>
-      <button onclick="shareScore()">Share</button>
+      <button onclick="shareOnX()">Share on X</button>
+      <button onclick="restartQuiz()">Restart Quiz</button>
     </div>
   </div>
 
   <footer>
-    Made by <strong>Risky</strong>
-    <div class="socials">
-      <a href="https://x.com/risky_xyz" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg" alt="X Logo">
-        @risky_xyz
-      </a>
-      <div>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Discord_logo.svg" alt="Discord Logo">
-        riskyyy.xd
+    <div class="footer-info">
+      <img class="profile" src="https://pbs.twimg.com/profile_images/1868541602320293888/-rPhBPR0_400x400.jpg" alt="Risky Profile">
+      <div><strong>Made by Risky</strong></div>
+      <div class="socials">
+        <a href="https://x.com/risky_xyz" target="_blank">
+          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X Logo">
+          @risky_xyz
+        </a>
+        <div>
+          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord Logo">
+          riskyyy.xd
+        </div>
       </div>
     </div>
   </footer>
@@ -221,22 +237,18 @@
       loadQuestion();
     }
 
-    function downloadScore() {
-      const content = `Sentient Quiz Scorecard\n\nScore: ${score} / ${quizData.length}\nMade by Risky`;
-      const blob = new Blob([content], { type: "text/plain" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "scorecard.txt";
-      link.click();
+    function shareOnX() {
+      const text = `I just scored ${score}/${quizData.length} on the Sentient Quiz! 🚀\nMade by Risky\nhttps://x.com/risky_xyz`;
+      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
     }
 
-    function shareScore() {
-      const text = `I just scored ${score}/${quizData.length} on the Sentient Quiz! 🚀\nMade by Risky\nhttps://x.com/risky_xyz`;
-      if (navigator.share) {
-        navigator.share({ title: "Sentient Quiz", text: text });
-      } else {
-        alert("Sharing not supported on this device. Copy your score:\n\n" + text);
-      }
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      document.getElementById("actions").style.display = "none";
+      document.getElementById("result").innerHTML = "";
+      loadQuestion();
     }
 
     loadQuestion();
