@@ -6,143 +6,71 @@
   <title>Sentient Quiz</title>
   <link rel="icon" href="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     :root{
-      --bg1:#0f172a; --bg2:#071028; --card:#0b1220;
+      --bg1:#0f172a; --bg2:#071028;
       --accent:#6ee7b7; --accent-2:#6366f1; --muted:#cbd5e1;
-      --glass: rgba(255,255,255,0.06);
     }
-    *{box-sizing:border-box}
     body{
       margin:0;
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background: radial-gradient(1000px 600px at 10% 10%, rgba(99,102,241,0.12), transparent),
-                  radial-gradient(800px 500px at 90% 90%, rgba(110,231,183,0.06), transparent),
-                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));
       color:#f8fafc;
-      padding:16px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:100vh;
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;padding:16px;
     }
-
-    .container{
-      width:100%;
-      max-width:960px;
-      margin:16px auto;
-      display:grid;
-      grid-template-columns: 340px 1fr;
-      gap:20px;
-    }
-
+    .container{width:100%;max-width:960px;display:grid;grid-template-columns:340px 1fr;gap:20px;}
     .panel,.card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      border:1px solid rgba(255,255,255,0.06);
-      border-radius:18px;
-      padding:18px;
-      box-shadow: 0 8px 30px rgba(2,6,23,0.7);
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:16px;padding:18px;
     }
-
-    .hero{
-      border-radius:12px; overflow:hidden; position:relative;
-      height:200px; display:flex; align-items:center; justify-content:center;
-    }
-    .hero img{width:100%; height:100%; object-fit:cover; filter:brightness(0.9);}
-    .hero .overlay{
-      position:absolute; bottom:0; left:0; right:0; padding:14px;
-      background:linear-gradient(180deg,transparent,rgba(0,0,0,0.7));
-    }
+    .hero{border-radius:12px;overflow:hidden;position:relative;height:200px;display:flex;align-items:center;justify-content:center;}
+    .hero img{width:100%;height:100%;object-fit:cover;filter:brightness(0.9);}
+    .hero .overlay{position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.7));}
     .hero h1{margin:0;font-size:22px;color:#fff;}
-
     .author{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;margin-top:14px;}
-    .author img{width:42px;height:42px;border-radius:999px;border:2px solid rgba(255,255,255,0.08);}
+    .author img{width:42px;height:42px;border-radius:50%;}
     .author .name{font-weight:600;font-size:14px;}
     .author .handle{font-size:12px;color:var(--muted);}
-
-    .desc{margin-top:12px;font-size:13px;color:var(--muted);line-height:1.5;}
-
-    .btn{
-      background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      border:none;color:#021321;font-weight:700;
-      padding:10px 14px;border-radius:10px;cursor:pointer;
-      box-shadow: 0 8px 30px rgba(99,102,241,0.15);
-    }
+    .desc{margin-top:12px;font-size:13px;color:var(--muted);}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;color:#021321;font-weight:700;padding:10px 14px;border-radius:10px;cursor:pointer;}
     .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--muted);}
-    .btn:disabled{opacity:0.5;cursor:not-allowed;}
-
     .progress{height:10px;background:rgba(255,255,255,0.05);border-radius:999px;overflow:hidden;margin-bottom:14px;}
     .progress>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .6s;}
-
-    h2.question{font-size:18px;margin:10px 0 14px;min-height:50px;}
-
+    h2.question{font-size:18px;margin:10px 0 14px;}
     .options{display:grid;gap:12px;}
-    .opt{
-      background:var(--glass);padding:12px 14px;border-radius:12px;
-      border:1px solid rgba(255,255,255,0.08);
-      cursor:pointer;transition:.2s;user-select:none;
-    }
+    .opt{background:rgba(255,255,255,0.05);padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:.2s;}
     .opt:hover{transform:translateY(-3px);}
-    .opt.correct{background:linear-gradient(90deg,rgba(110,231,183,0.15),rgba(99,102,241,0.08));border-color:var(--accent);}
-    .opt.wrong{background:linear-gradient(90deg,rgba(239,68,68,0.15),rgba(99,102,241,0.05));border-color:#ef4444;}
-
+    .opt.correct{background:rgba(110,231,183,0.2);border-color:var(--accent);}
+    .opt.wrong{background:rgba(239,68,68,0.2);border-color:#ef4444;}
     .result{text-align:center;padding:18px;}
-    .score{font-size:36px;font-weight:800;margin:6px 0;
-      background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      -webkit-background-clip:text;background-clip:text;color:transparent;}
+    .score{font-size:36px;font-weight:800;margin:6px 0;background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
     .small{color:var(--muted);font-size:14px;}
-
-    .leaderboard{margin-top:20px;}
-    .leaderboard h3{margin:0 0 10px;font-size:16px;}
-    .leaderboard ul{list-style:none;padding:0;margin:0;}
-    .leaderboard li{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;}
-
-    /* Start Screen */
-    #startScreen{text-align:center;max-width:400px;margin:auto;}
-    #startScreen input{
-      width:100%;padding:10px;margin:8px 0;
-      border-radius:8px;border:1px solid rgba(255,255,255,0.1);
-      background:rgba(255,255,255,0.05);color:#fff;
-    }
-
-    @media (max-width:768px){
-      .container{grid-template-columns:1fr;}
-      .hero{height:160px;}
-    }
+    .share-buttons{margin-top:20px;display:flex;gap:10px;justify-content:center;}
+    @media(max-width:768px){.container{grid-template-columns:1fr;}.hero{height:160px;}}
   </style>
 </head>
 <body>
-<div id="startScreen">
-  <img src="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg" width="80" style="border-radius:50%;margin-bottom:12px;">
-  <h1>Sentient Quiz</h1>
-  <p>Enter your details to start:</p>
-  <input id="playerName" type="text" placeholder="Your Name" required>
-  <input id="playerTwitter" type="text" placeholder="Twitter Handle (without @)" required>
-  <button class="btn" onclick="startQuiz()">Start Quiz</button>
-</div>
-
-<div class="container" id="quizApp" style="display:none;">
+<div class="container">
   <aside class="panel">
     <div class="hero">
       <img src="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg" alt="Sentient logo">
       <div class="overlay"><h1>Sentient Quiz</h1></div>
     </div>
     <a class="author" href="https://x.com/risky_xyz" target="_blank">
-      <img src="https://pbs.twimg.com/profile_images/1868541602320293888/-rPhBPR0_400x400.jpg" alt="risky_xyz profile">
+      <img src="https://pbs.twimg.com/profile_images/1868541602320293888/-rPhBPR0_400x400.jpg" alt="risky_xyz">
       <div><div class="name">Made By risky_xyz</div><div class="handle">@risky_xyz</div></div>
     </a>
-    <div class="desc">Answer 15 questions and test your Sentient knowledge. See your score and compete on the leaderboard.</div>
-    <div class="leaderboard">
-      <h3>Leaderboard</h3>
-      <ul id="leaderboardList"></ul>
-    </div>
+    <div class="desc">Answer 15 questions and test your Sentient knowledge.</div>
   </aside>
 
   <section class="card">
     <div class="progress"><i id="progress-bar"></i></div>
     <div id="quizContent">
-      <div class="qtop"><div id="qnum"></div><div id="timer"></div></div>
+      <div id="qnum"></div>
       <h2 class="question" id="question">Loading...</h2>
       <div class="options" id="options"></div>
       <div style="display:flex;justify-content:space-between;margin-top:14px;">
@@ -154,13 +82,17 @@
       <div class="small">Quiz Finished!</div>
       <div class="score" id="finalScore">0 / 15</div>
       <div class="small" id="resultText">Great job!</div>
-      <button class="btn" onclick="restart()">Restart Quiz</button>
+      <div class="share-buttons">
+        <button class="btn" onclick="downloadScore()">Download Scorecard</button>
+        <button class="btn" onclick="shareOnTwitter()">Share on X</button>
+      </div>
+      <button class="btn secondary" style="margin-top:15px;" onclick="restart()">Restart Quiz</button>
     </div>
   </section>
 </div>
 
 <script>
-const questions = [ /* same 15 Qs from your code */ 
+const questions=[ /* same 15 Qs */ 
   {q:"What does GRID stand for in the context of Sentient’s architecture?",options:["Global Research and Intelligence Directory","Guiding Recursive Intelligence Design","Generalized Reasoning & Inference Domain","Global Routing & Intelligence Dispatch"],answer:0},
   {q:"How does Sentient propose to fund and reward contributions to the GRID ecosystem?",options:["Using traditional VC funding only","By issuing equity shares in projects","Through a token economy where people stake $SENT on artifacts","Via subscription fees from users only"],answer:2},
   {q:"What is the primary architectural novelty of ROMA (Recursive Open Meta-Agent)?",options:["It uses a single monolithic model for all tasks","It uses a flat multi-agent system with no hierarchy","It decomposes complex tasks recursively into subtasks in a tree structure","It relies purely on human-in-the-loop corrections"],answer:2},
@@ -177,31 +109,21 @@ const questions = [ /* same 15 Qs from your code */
   {q:"How does Dobby combine personality with accuracy?",options:["Training two separate models","Discarding accuracy for vibe","Using token-level routing, data overloading, and an automated training pipeline","Only handling non-technical tasks"],answer:2},
   {q:"Major risk of AI agents with blockchain?",options:["Slow transaction times","Security vulnerabilities like memory injection leading to irreversible losses","Lack of adoption","High fees"],answer:1},
 ];
+let current=0,score=0;
 
-let current=0,score=0,selected=null,player={name:"",twitter:""};
-
-function startQuiz(){
-  const name=document.getElementById("playerName").value.trim();
-  const tw=document.getElementById("playerTwitter").value.trim();
-  if(!name||!tw){alert("Please enter both name and Twitter handle");return;}
-  player={name,twitter:tw};
-  document.getElementById("startScreen").style.display="none";
-  document.getElementById("quizApp").style.display="grid";
-  renderQuestion();
-  loadLeaderboard();
-}
+function shuffleArray(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
 
 function renderQuestion(){
   const q=questions[current];
   document.getElementById("qnum").textContent=`Question ${current+1} of ${questions.length}`;
   document.getElementById("question").textContent=q.q;
-  const optionsEl=document.getElementById("options");
-  optionsEl.innerHTML="";
-  q.options.forEach((opt,idx)=>{
+  const optionsEl=document.getElementById("options");optionsEl.innerHTML="";
+  let opts=q.options.map((opt,idx)=>({text:opt,idx}));
+  opts=shuffleArray(opts);
+  opts.forEach(o=>{
     const btn=document.createElement("div");
-    btn.className="opt";
-    btn.textContent=`${String.fromCharCode(65+idx)}. ${opt}`;
-    btn.onclick=()=>selectAnswer(idx,btn);
+    btn.className="opt";btn.textContent=o.text;
+    btn.onclick=()=>selectAnswer(o.idx,btn);
     optionsEl.appendChild(btn);
   });
   document.getElementById("progress-bar").style.width=(current/questions.length*100)+"%";
@@ -212,7 +134,6 @@ function selectAnswer(idx,btn){
   document.querySelectorAll(".opt").forEach(el=>el.onclick=null);
   if(idx===q.answer){btn.classList.add("correct");score++;} else {btn.classList.add("wrong");document.querySelectorAll(".opt")[q.answer].classList.add("correct");}
 }
-
 function goNext(){if(current+1<questions.length){current++;renderQuestion();}else showResult();}
 function goPrev(){if(current>0){current--;renderQuestion();}}
 
@@ -220,26 +141,24 @@ function showResult(){
   document.getElementById("quizContent").style.display="none";
   document.getElementById("resultPanel").style.display="block";
   document.getElementById("finalScore").textContent=`${score} / ${questions.length}`;
-  document.getElementById("resultText").textContent= score===questions.length ? "Perfect! You're a Sentient whiz 🎯" : score>=10 ? "Great Knowledge!" : "Keep Learning Sentient!";
-  saveLeaderboard();
+  document.getElementById("resultText").textContent=score===questions.length?"Perfect! 🎯":score>=10?"Great Knowledge!":"Keep Learning!";
 }
-
 function restart(){current=0;score=0;document.getElementById("quizContent").style.display="block";document.getElementById("resultPanel").style.display="none";renderQuestion();}
 
-function saveLeaderboard(){
-  let board=JSON.parse(localStorage.getItem("sentientLeaderboard")||"[]");
-  board.push({name:player.name,twitter:player.twitter,score});
-  board.sort((a,b)=>b.score-a.score);
-  board=board.slice(0,5);
-  localStorage.setItem("sentientLeaderboard",JSON.stringify(board));
-  loadLeaderboard();
+function downloadScore(){
+  html2canvas(document.querySelector("#resultPanel")).then(canvas=>{
+    const link=document.createElement("a");
+    link.download="sentient_score.png";
+    link.href=canvas.toDataURL();
+    link.click();
+  });
 }
-function loadLeaderboard(){
-  let board=JSON.parse(localStorage.getItem("sentientLeaderboard")||"[]");
-  const list=document.getElementById("leaderboardList");list.innerHTML="";
-  board.forEach((p,i)=>{const li=document.createElement("li");li.textContent=`${i+1}. ${p.name} (@${p.twitter}) - ${p.score}`;list.appendChild(li);});
+function shareOnTwitter(){
+  const text=`I scored ${score}/${questions.length} in the Sentient Quiz! 🚀 Test your knowledge too!`;
+  const url=encodeURIComponent(window.location.href);
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`,"_blank");
 }
+renderQuestion();
 </script>
 </body>
 </html>
-
