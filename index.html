@@ -1,164 +1,246 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sentient Quiz</title>
-  <link rel="icon" href="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
   <style>
-    :root{
-      --bg1:#0f172a; --bg2:#071028;
-      --accent:#6ee7b7; --accent-2:#6366f1; --muted:#cbd5e1;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background:linear-gradient(180deg,var(--bg1),var(--bg2));
-      color:#f8fafc;
-      display:flex;align-items:center;justify-content:center;
-      min-height:100vh;padding:16px;
+
+    header {
+      text-align: center;
+      padding: 20px;
     }
-    .container{width:100%;max-width:960px;display:grid;grid-template-columns:340px 1fr;gap:20px;}
-    .panel,.card{
-      background:rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:16px;padding:18px;
+
+    header img {
+      width: 100px;
+      border-radius: 50%;
+      margin-bottom: 10px;
     }
-    .hero{border-radius:12px;overflow:hidden;position:relative;height:200px;display:flex;align-items:center;justify-content:center;}
-    .hero img{width:100%;height:100%;object-fit:cover;filter:brightness(0.9);}
-    .hero .overlay{position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.7));}
-    .hero h1{margin:0;font-size:22px;color:#fff;}
-    .author{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;margin-top:14px;}
-    .author img{width:42px;height:42px;border-radius:50%;}
-    .author .name{font-weight:600;font-size:14px;}
-    .author .handle{font-size:12px;color:var(--muted);}
-    .desc{margin-top:12px;font-size:13px;color:var(--muted);}
-    .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;color:#021321;font-weight:700;padding:10px 14px;border-radius:10px;cursor:pointer;}
-    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--muted);}
-    .progress{height:10px;background:rgba(255,255,255,0.05);border-radius:999px;overflow:hidden;margin-bottom:14px;}
-    .progress>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .6s;}
-    h2.question{font-size:18px;margin:10px 0 14px;}
-    .options{display:grid;gap:12px;}
-    .opt{background:rgba(255,255,255,0.05);padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:.2s;}
-    .opt:hover{transform:translateY(-3px);}
-    .opt.correct{background:rgba(110,231,183,0.2);border-color:var(--accent);}
-    .opt.wrong{background:rgba(239,68,68,0.2);border-color:#ef4444;}
-    .result{text-align:center;padding:18px;}
-    .score{font-size:36px;font-weight:800;margin:6px 0;background:linear-gradient(90deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
-    .small{color:var(--muted);font-size:14px;}
-    .share-buttons{margin-top:20px;display:flex;gap:10px;justify-content:center;}
-    @media(max-width:768px){.container{grid-template-columns:1fr;}.hero{height:160px;}}
+
+    h1 {
+      font-size: 2rem;
+      margin: 10px 0;
+      color: #00bcd4;
+    }
+
+    #quiz-container {
+      background: rgba(20, 20, 20, 0.9);
+      border-radius: 15px;
+      padding: 20px;
+      max-width: 700px;
+      width: 90%;
+      box-shadow: 0 0 20px rgba(0, 188, 212, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      background: #2a2a2a;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .options button:hover {
+      background: #00bcd4;
+      color: #000;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #actions {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #actions button {
+      background: #00bcd4;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    #actions button:hover {
+      background: #008c9e;
+      color: #fff;
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.9rem;
+      color: #bbb;
+    }
+
+    .socials {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .socials a, .socials div {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .socials img {
+      width: 22px;
+      height: 22px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+      .question {
+        font-size: 1rem;
+      }
+      .options button {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
-<div class="container">
-  <aside class="panel">
-    <div class="hero">
-      <img src="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg" alt="Sentient logo">
-      <div class="overlay"><h1>Sentient Quiz</h1></div>
-    </div>
-    <a class="author" href="https://x.com/risky_xyz" target="_blank">
-      <img src="https://pbs.twimg.com/profile_images/1868541602320293888/-rPhBPR0_400x400.jpg" alt="risky_xyz">
-      <div><div class="name">Made By risky_xyz</div><div class="handle">@risky_xyz</div></div>
-    </a>
-    <div class="desc">Answer 15 questions and test your Sentient knowledge.</div>
-  </aside>
 
-  <section class="card">
-    <div class="progress"><i id="progress-bar"></i></div>
-    <div id="quizContent">
-      <div id="qnum"></div>
-      <h2 class="question" id="question">Loading...</h2>
-      <div class="options" id="options"></div>
-      <div style="display:flex;justify-content:space-between;margin-top:14px;">
-        <button class="btn secondary" onclick="goPrev()">Previous</button>
-        <button class="btn" onclick="goNext()">Next</button>
+  <header>
+    <img src="https://pbs.twimg.com/profile_images/1966252290500710400/iacpKDQc_400x400.jpg" alt="Sentient Logo">
+    <h1>Sentient Quiz</h1>
+  </header>
+
+  <div id="quiz-container">
+    <div id="quiz"></div>
+    <div id="result"></div>
+    <div id="actions" style="display:none;">
+      <button onclick="downloadScore()">Download Scorecard</button>
+      <button onclick="shareScore()">Share</button>
+    </div>
+  </div>
+
+  <footer>
+    Made by <strong>Risky</strong>
+    <div class="socials">
+      <a href="https://x.com/risky_xyz" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg" alt="X Logo">
+        @risky_xyz
+      </a>
+      <div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Discord_logo.svg" alt="Discord Logo">
+        riskyyy.xd
       </div>
     </div>
-    <div id="resultPanel" class="result" style="display:none;">
-      <div class="small">Quiz Finished!</div>
-      <div class="score" id="finalScore">0 / 15</div>
-      <div class="small" id="resultText">Great job!</div>
-      <div class="share-buttons">
-        <button class="btn" onclick="downloadScore()">Download Scorecard</button>
-        <button class="btn" onclick="shareOnTwitter()">Share on X</button>
-      </div>
-      <button class="btn secondary" style="margin-top:15px;" onclick="restart()">Restart Quiz</button>
-    </div>
-  </section>
-</div>
+  </footer>
 
-<script>
-const questions=[ /* same 15 Qs */ 
-  {q:"What does GRID stand for in the context of Sentient’s architecture?",options:["Global Research and Intelligence Directory","Guiding Recursive Intelligence Design","Generalized Reasoning & Inference Domain","Global Routing & Intelligence Dispatch"],answer:0},
-  {q:"How does Sentient propose to fund and reward contributions to the GRID ecosystem?",options:["Using traditional VC funding only","By issuing equity shares in projects","Through a token economy where people stake $SENT on artifacts","Via subscription fees from users only"],answer:2},
-  {q:"What is the primary architectural novelty of ROMA (Recursive Open Meta-Agent)?",options:["It uses a single monolithic model for all tasks","It uses a flat multi-agent system with no hierarchy","It decomposes complex tasks recursively into subtasks in a tree structure","It relies purely on human-in-the-loop corrections"],answer:2},
-  {q:"In the ROMA framework, what role does the “Aggregator” node perform?",options:["It breaks a task into subtasks","It executes atomic tasks","It merges results from children tasks","It discards irrelevant sub-results"],answer:2},
-  {q:"What performance did Open Deep Search (ODS) achieve on the FRAMES benchmark?",options:["~55%","~75.3%","~90%","~65.6%"],answer:1},
-  {q:"Which two components are central to ODS’s architecture?",options:["Search Engine and Summarizer","Open Reasoning Agent and Open Search Tool","Prompt Generator and Memory Module","Context Router and Token Filter"],answer:1},
-  {q:"What is a context manipulation attack in web agents?",options:["Changing the user’s browser settings","Tampering with stored memory/context to influence agent behavior","Altering the agent’s prompts at runtime","Overloading the agent with too much context"],answer:1},
-  {q:"What alternative defense is suggested instead of prompt-only?",options:["Use longer prompts","Semantic integrity checks and strict memory isolation","Disable memory entirely","Use only closed-source agents"],answer:1},
-  {q:"What is LiveCodeBench Pro?",options:["A code editor built into Sentient Chat","A benchmark evaluating LLMs on competitive programming tasks","A tool to auto-generate documentation","A plugin to test code style"],answer:1},
-  {q:"Why is coding difficult for LLMs?",options:["Because code is ambiguous","It requires exact syntax and tracking long-range dependencies","LLMs dislike programming languages","There are no benchmarks"],answer:1},
-  {q:"What is fingerprinting in open-source models?",options:["A biometric login method","Embedding invisible key-response pairs into models to prove ownership","A method to speed up model inference","A technique for compressing model weights"],answer:1},
-  {q:"What challenge does fingerprinting overcome?",options:["Slow performance","Model interpretability","Verifiable ownership even when model weights are shared","Reducing energy consumption"],answer:2},
-  {q:"Problem with most AI assistants today?",options:["They are too fast","They are too creative","They sound overly polite, sanitized, and lack personality","They refuse to answer basic questions"],answer:2},
-  {q:"How does Dobby combine personality with accuracy?",options:["Training two separate models","Discarding accuracy for vibe","Using token-level routing, data overloading, and an automated training pipeline","Only handling non-technical tasks"],answer:2},
-  {q:"Major risk of AI agents with blockchain?",options:["Slow transaction times","Security vulnerabilities like memory injection leading to irreversible losses","Lack of adoption","High fees"],answer:1},
-];
-let current=0,score=0;
+  <script>
+    const quizData = [
+      { q: "What does GRID stand for in the context of Sentient’s architecture?", options: ["Global Research and Intelligence Directory","Guiding Recursive Intelligence Design","Generalized Reasoning & Inference Domain","Global Routing & Intelligence Dispatch"], answer: "Global Research and Intelligence Directory" },
+      { q: "How does Sentient propose to fund and reward contributions to the GRID ecosystem?", options: ["Using traditional VC funding only","By issuing equity shares in projects","Through a token economy where people stake $SENT on artifacts","Via subscription fees from users only"], answer: "Through a token economy where people stake $SENT on artifacts" },
+      { q: "What is the primary architectural novelty of ROMA?", options: ["It uses a single monolithic model for all tasks","It uses a flat multi-agent system with no hierarchy","It decomposes complex tasks recursively into subtasks in a tree structure","It relies purely on human-in-the-loop corrections"], answer: "It decomposes complex tasks recursively into subtasks in a tree structure" },
+      { q: "In the ROMA framework, what role does the “Aggregator” node perform?", options: ["It breaks a task into subtasks","It executes atomic tasks","It merges results from children tasks","It discards irrelevant sub-results"], answer: "It merges results from children tasks" },
+      { q: "What performance did Open Deep Search (ODS) achieve on the FRAMES benchmark?", options: ["~55%","~75.3%","~90%","~65.6%"], answer: "~75.3%" },
+      { q: "Which two components are central to ODS’s architecture?", options: ["Search Engine and Summarizer","Open Reasoning Agent and Open Search Tool","Prompt Generator and Memory Module","Context Router and Token Filter"], answer: "Open Reasoning Agent and Open Search Tool" },
+      { q: "What is a context manipulation attack in the context of web agents?", options: ["Changing the user’s browser settings","Tampering with stored memory/context to influence agent behavior","Altering the agent’s prompts at runtime","Overloading the agent with too much context"], answer: "Tampering with stored memory/context to influence agent behavior" },
+      { q: "The blog asserts that prompt-only defenses are insufficient. What alternative measure is suggested?", options: ["Use longer prompts","Semantic integrity checks and strict memory isolation","Disable memory entirely","Use only closed-source agents"], answer: "Semantic integrity checks and strict memory isolation" },
+      { q: "What is LiveCodeBench Pro?", options: ["A code editor built into Sentient Chat","A benchmark evaluating LLMs on competitive programming tasks","A tool to auto-generate documentation","A plugin to test code style"], answer: "A benchmark evaluating LLMs on competitive programming tasks" },
+      { q: "Why is coding considered especially difficult for LLMs?", options: ["Because code is ambiguous","It requires exact syntax and tracking long-range dependencies","LLMs dislike programming languages","There are no benchmarks for code tasks"], answer: "It requires exact syntax and tracking long-range dependencies" },
+      { q: "What is fingerprinting?", options: ["A biometric login method","Embedding invisible key-response pairs into models to prove ownership","A method to speed up model inference","A technique for compressing model weights"], answer: "Embedding invisible key-response pairs into models to prove ownership" },
+      { q: "What challenge does fingerprinting try to overcome in open-source models?", options: ["Slow performance","Model interpretability","Verifiable ownership even when model weights are shared","Reducing energy consumption"], answer: "Verifiable ownership even when model weights are shared" },
+      { q: "In “Finally: AI That Doesn’t Sound Like a Corporate Robot,” what problem do the authors identify with most AI assistants today?", options: ["They are too fast","They are too creative","They sound overly polite, sanitized, and lack personality","They refuse to answer basic questions"], answer: "They sound overly polite, sanitized, and lack personality" },
+      { q: "How does Dobby manage to combine personality with accurate technical performance?", options: ["Training two separate models and switching manually","Discarding accuracy for vibe","Using token-level routing, data overloading, and an automated training pipeline","Only handling non-technical tasks"], answer: "Using token-level routing, data overloading, and an automated training pipeline" },
+      { q: "What major risk is highlighted when AI agents integrate with crypto/blockchain systems?", options: ["Slow transaction times","Security vulnerabilities like memory injection leading to irreversible losses","Lack of adoption","High fees"], answer: "Security vulnerabilities like memory injection leading to irreversible losses" }
+    ];
 
-function shuffleArray(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+    let currentQuestion = 0;
+    let score = 0;
 
-function renderQuestion(){
-  const q=questions[current];
-  document.getElementById("qnum").textContent=`Question ${current+1} of ${questions.length}`;
-  document.getElementById("question").textContent=q.q;
-  const optionsEl=document.getElementById("options");optionsEl.innerHTML="";
-  let opts=q.options.map((opt,idx)=>({text:opt,idx}));
-  opts=shuffleArray(opts);
-  opts.forEach(o=>{
-    const btn=document.createElement("div");
-    btn.className="opt";btn.textContent=o.text;
-    btn.onclick=()=>selectAnswer(o.idx,btn);
-    optionsEl.appendChild(btn);
-  });
-  document.getElementById("progress-bar").style.width=(current/questions.length*100)+"%";
-}
+    function shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
 
-function selectAnswer(idx,btn){
-  const q=questions[current];
-  document.querySelectorAll(".opt").forEach(el=>el.onclick=null);
-  if(idx===q.answer){btn.classList.add("correct");score++;} else {btn.classList.add("wrong");document.querySelectorAll(".opt")[q.answer].classList.add("correct");}
-}
-function goNext(){if(current+1<questions.length){current++;renderQuestion();}else showResult();}
-function goPrev(){if(current>0){current--;renderQuestion();}}
+    function loadQuestion() {
+      if (currentQuestion < quizData.length) {
+        const qData = quizData[currentQuestion];
+        const quizDiv = document.getElementById("quiz");
+        let options = shuffleArray([...qData.options]);
+        quizDiv.innerHTML = `
+          <div class="question">${currentQuestion + 1}. ${qData.q}</div>
+          <div class="options">
+            ${options.map(opt => `<button onclick="checkAnswer('${opt}')">${opt}</button>`).join("")}
+          </div>
+        `;
+      } else {
+        document.getElementById("quiz").innerHTML = `<h2>You finished the quiz!</h2>`;
+        document.getElementById("result").innerHTML = `Your Score: ${score} / ${quizData.length}`;
+        document.getElementById("actions").style.display = "block";
+      }
+    }
 
-function showResult(){
-  document.getElementById("quizContent").style.display="none";
-  document.getElementById("resultPanel").style.display="block";
-  document.getElementById("finalScore").textContent=`${score} / ${questions.length}`;
-  document.getElementById("resultText").textContent=score===questions.length?"Perfect! 🎯":score>=10?"Great Knowledge!":"Keep Learning!";
-}
-function restart(){current=0;score=0;document.getElementById("quizContent").style.display="block";document.getElementById("resultPanel").style.display="none";renderQuestion();}
+    function checkAnswer(selected) {
+      if (selected === quizData[currentQuestion].answer) {
+        score++;
+      }
+      currentQuestion++;
+      loadQuestion();
+    }
 
-function downloadScore(){
-  html2canvas(document.querySelector("#resultPanel")).then(canvas=>{
-    const link=document.createElement("a");
-    link.download="sentient_score.png";
-    link.href=canvas.toDataURL();
-    link.click();
-  });
-}
-function shareOnTwitter(){
-  const text=`I scored ${score}/${questions.length} in the Sentient Quiz! 🚀 Test your knowledge too!`;
-  const url=encodeURIComponent(window.location.href);
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${url}`,"_blank");
-}
-renderQuestion();
-</script>
+    function downloadScore() {
+      const content = `Sentient Quiz Scorecard\n\nScore: ${score} / ${quizData.length}\nMade by Risky`;
+      const blob = new Blob([content], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "scorecard.txt";
+      link.click();
+    }
+
+    function shareScore() {
+      const text = `I just scored ${score}/${quizData.length} on the Sentient Quiz! 🚀\nMade by Risky\nhttps://x.com/risky_xyz`;
+      if (navigator.share) {
+        navigator.share({ title: "Sentient Quiz", text: text });
+      } else {
+        alert("Sharing not supported on this device. Copy your score:\n\n" + text);
+      }
+    }
+
+    loadQuestion();
+  </script>
+
 </body>
 </html>
